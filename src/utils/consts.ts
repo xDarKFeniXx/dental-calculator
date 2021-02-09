@@ -1,9 +1,10 @@
 export enum AuthRoutesEnum{
+    AUTH='/auth',
     REGISTRATION='/registration',
     LOGIN='/login',
-    AUTH='/auth'
+    ME='/me'
 }
-export enum StatusResultEnu{
+export enum StatusResultEnum{
     SUCCESS='success',
     ERROR='error',
     FAILED='failed'

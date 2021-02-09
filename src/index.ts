@@ -3,6 +3,7 @@ dotenv.config()
 import express from 'express';
 import mongoose from 'mongoose'
 import cors from 'cors'
+import router from './routes';
 
 const PORT = process.env.SERVER_PORT??5000;
 const MONGO_HOSTNAME=process.env.MONGO_HOSTNAME
@@ -17,7 +18,11 @@ if(process.env.NODE_ENV !== 'production'){
 const app:express.Application=express()
 app.use(cors())
 app.use(express.json())
-console.log(MONGO_URL)
+
+const API_URL=process.env.API_URL??'/api'
+
+app.use(API_URL, router)
+app.use(API_URL+'/some', (req, res) => res.json('some'))
 const start = async () => {
     try {
         await mongoose.connect(MONGO_URL, {
