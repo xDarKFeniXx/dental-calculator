@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: "mongodb"
+    env_file:
+      - ./.env.development
+    networks:
+    - db
+    volumes:
+    - ./_databases/mongodb/mongo-data:/data/db
+    ports:
+    - 27017:27017
+    command: mongod
+    restart: always
+
+networks:
+  db:
+    driver: bridge

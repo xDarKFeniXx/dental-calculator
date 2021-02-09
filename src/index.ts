@@ -5,11 +5,19 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 const PORT = process.env.SERVER_PORT??5000;
-const MONGO_URL=process.env.MONGO_URL??"mongodb://localhost:27017"
+const MONGO_HOSTNAME=process.env.MONGO_HOSTNAME
+const MONGO_PORT=process.env.MONGO_PORT
+const MONGO_DB=process.env.MONGO_DB
+let MONGO_URL=''
+if(process.env.NODE_ENV !== 'production'){
+    MONGO_URL=`mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}`
+} else {
+    MONGO_URL=process.env.MONGO_URL??"mongodb://localhost:27017"
+}
 const app:express.Application=express()
 app.use(cors())
 app.use(express.json())
-
+console.log(MONGO_URL)
 const start = async () => {
     try {
         await mongoose.connect(MONGO_URL, {
