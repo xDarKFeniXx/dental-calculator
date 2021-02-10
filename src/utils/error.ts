@@ -1,4 +1,6 @@
-import {StatusCodeEnum} from "./consts";
+import express from "express";
+import {StatusCodeEnum, StatusResultEnum} from "./consts";
+import {Result, ValidationError} from "express-validator";
 
 
 class ApiError extends Error{
@@ -7,6 +9,7 @@ class ApiError extends Error{
         super();
         this.status = status
         this.message = message
+
     }
 
     static badRequest(message:string) {
@@ -26,3 +29,6 @@ class ApiError extends Error{
 }
 
 export default ApiError
+export const handlerError=(res:express.Response, statusCode=StatusCodeEnum.BAD_REQUEST, message:string| string[] |Result<ValidationError>='Что то пошло не так')=>{
+    return res.status(statusCode).json({status: StatusResultEnum.ERROR, message})
+}
