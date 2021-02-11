@@ -1,10 +1,18 @@
 import {Schema, model, Types, Document} from 'mongoose';
+import {ICategory} from "./category-model";
+import {IProduct} from "./product-model";
+import {IBill} from "./bill-model";
+import {IPatient} from "./patient-model";
 export interface IUser extends Document {
     email: string,
     password:string,
     fullName:string,
     username:string,
-    position:string
+    position:string,
+    categories:Array<ICategory['_id']>,
+    products:Array<IProduct['_id']>,
+    bills:Array<IBill['_id']>,
+    patients: Array<IPatient['_id']>
 }
 const UserSchema = new Schema({
     // _id

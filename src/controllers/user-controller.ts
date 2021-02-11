@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {validationResult} from "express-validator";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
-import {UserModel} from "../models/user-model";
+import {IUser, UserModel} from "../models/user-model";
 import {StatusCodeEnum, StatusResultEnum} from "../utils/consts";
 import {IResBody} from "../utils/types";
 import {handlerError} from "../utils/error";
@@ -10,17 +10,30 @@ import {handlerError} from "../utils/error";
 const SECRET_KEY=process.env.SECRET_KEY??"secret_key"
 const SALT=process.env.SECRET_SALT??5
 
-const generateJwt = (id:string, email:string, username:string) => {
+const generateJwt = (id:IUser['_id'], email:IUser['email'], username:IUser['username']) => {
     return jwt.sign(
         {id, email, username},
         SECRET_KEY,
         {expiresIn: '24h'}
     )
 }
-type RegistrationBody=IResBody<string>
-
+type RegistrationBodyRes=IResBody<string>
+type RegistrationBodyReq={
+    email:IUser['email'],
+    password:IUser['password'],
+    username:IUser['username']
+}
+interface CustomRequest<T> extends Request {
+    body: T
+}
+interface LoginReqBody{
+    email:IUser['email'],
+    password:IUser['password'],
+    username?:IUser['username']
+}
 class UserController {
-    async registration(req:Request, res:Response<RegistrationBody>) {
+    // async registration(req:CustomRequest<RegistrationBodyResReq>, res:Response<RegistrationBodyRes>) {
+    async registration(req:Request<any, any, RegistrationBodyReq>, res:Response<RegistrationBodyRes>) {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return handlerError(res, StatusCodeEnum.BAD_REQUEST, errors)
@@ -39,9 +52,9 @@ class UserController {
         return res.json({data:token, status:StatusResultEnum.SUCCESS})
     }
 
-    async login(req:Request, res:Response<RegistrationBody>) {
-        const {email, password} = req.body
-        const user = await UserModel.findOne({email})
+    async login(req:Request<any, any, LoginReqBody>, res:Response<RegistrationBodyRes>) {
+        const {email, password, username} = req.body
+        const user = await UserModel.findOne({$or:[{email}, {username}]})
         if (!user) {
             return handlerError(res, StatusCodeEnum.INTERNAL_SERVER_ERROR, 'Пользователь не найден')
         }
@@ -53,7 +66,7 @@ class UserController {
         return res.json({data:token, status:StatusResultEnum.SUCCESS})
     }
 
-    async check(req:Request, res:Response<RegistrationBody>) {
+    async check(req:Request, res:Response<RegistrationBodyRes>) {
         const token = generateJwt(req.body.user.id, req.body.user.email, req.body.user.username)
         return res.json({data:token, status:StatusResultEnum.SUCCESS})
     }
