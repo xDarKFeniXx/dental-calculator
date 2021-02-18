@@ -9,7 +9,8 @@ export enum StatusResultEnum{
     ERROR='error',
     FAILED='failed'
 }
-
+export const SECRET_KEY=process.env.SECRET_KEY??"secret_key"
+export const SALT=process.env.SECRET_SALT??5
 export enum StatusCodeEnum{
     /**
      * The server has received the request headers and the client should proceed to send the request body

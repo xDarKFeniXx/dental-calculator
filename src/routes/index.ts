@@ -1,10 +1,10 @@
 import Router from 'express'
-import userRouter from './auth-routes'
+import authRouter from './auth-routes'
 import {AuthRoutesEnum} from "../utils/consts";
 
 
 const router = Router()
-router.use(AuthRoutesEnum.AUTH, userRouter)
+router.use(AuthRoutesEnum.AUTH, authRouter)
 
 
 export default router
