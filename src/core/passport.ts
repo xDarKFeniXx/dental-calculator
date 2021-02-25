@@ -37,7 +37,6 @@ passport.use(
         },
         async (payload: { data: IUser }, done): Promise<void> => {
             try {
-                console.log('payload data',payload.data)
                 const user = await UserModel.findById(payload.data._id).exec();
 
                 if (user) {
@@ -54,7 +53,6 @@ passport.use(
 
     // @ts-ignore
 passport.serializeUser((user:IUser, done) => {
-    console.log('serialize', user)
     done(null, user?._id);
 });
 
